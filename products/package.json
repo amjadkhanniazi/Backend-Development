@@ -3,6 +3,18 @@
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
+  "nodemon": {
+    "watch": [
+      "index.js",
+      "middlewares",
+      "config",
+      "models"
+    ],
+    "ext": "js,json",
+    "ignore": [
+      "node_modules"
+    ]
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,10 +23,15 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "mongoose": "^8.6.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.1"
+  },
+  "devDependencies": {
     "nodemon": "^3.1.4"
   }
 }
