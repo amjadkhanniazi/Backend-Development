@@ -17,9 +17,21 @@ app.get('/products', authenticateToken,async (req,res)=>{
     res.json(product);
 })
 
+app.get('/', (req, res) => {
+res.json("It is working")
+})
 app.post('/products/new', authenticateToken,async (req,res)=>{
-    const product = new products(req.body);
-    await product.save();
+    const { name, price, description }  = new products(req.body);
+    const userId = req.user.id; 
+    const newProduct = new product({
+        name,
+        price,
+        description,
+        user: userId
+    });
+
+    await newProduct.save();
+
     res.json({
         message: 'Product added successfully'
     });

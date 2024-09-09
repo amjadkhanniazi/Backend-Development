@@ -23,6 +23,17 @@ userSchema.pre('save', async function(next) {
     next();
 });
 
+
+// Optional: Virtual field to get the products for a user (for ease of querying)
+userSchema.virtual('products', {
+    ref: 'products',
+    localField: '_id',
+    foreignField: 'user'
+});
+
+
+
+
 // Compare hashed password
 userSchema.methods.comparePassword = function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
@@ -34,3 +45,5 @@ userSchema.methods.getToken = function() {
 
 
 export default mongoose.model('User',userSchema);
+
+// hello buddy, hw are you doing
