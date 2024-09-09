@@ -1,39 +1,45 @@
 import express from 'express';
 import cors from 'cors';
+import products from './models/products.js';
 import connectDB from './config/db.js';
-import rooms from './models/rooms.js';
-import authenticateToken from './midllewares/auth.js';
-import user from './models/user.js';
+import user from './models/users.js';
+import 'dotenv/config';
+import authenticateToken from './middlewares/auth.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
+app.use(express.urlencoded({extended:true}));
 connectDB();
-
-app.get('/rooms', authenticateToken,  async (req,res)=>{
-    const room = await rooms.find();
-    res.json(room);
+app.get('/products', authenticateToken,async (req,res)=>{
+    const product = await products.find();
+    res.json(product);
 })
 
-app.post('/rooms/new',authenticateToken, async (req,res)=>{
-    await rooms.create(req.body);
-    res.json({message: "Room created"});
+app.post('/products/new', authenticateToken,async (req,res)=>{
+    const product = new products(req.body);
+    await product.save();
+    res.json({
+        message: 'Product added successfully'
+    });
 })
 
-app.get('/rooms/:id',authenticateToken, async (req,res)=>{
-    const room = await rooms.findById(req.params.id);
-    res.json(room)
+app.get('/products/:id', authenticateToken, async (req, res) => {
+    const product= await products.findById(req.params.id);
+    res.json(product);
 })
 
-app.delete('/rooms/:id',authenticateToken, async (req,res)=>{
-    await rooms.findByIdAndDelete(req.params.id);
-    res.json({message: "Room deleted"});
+app.delete('/products/:id', authenticateToken, async (req, res) => {
+    await products.findByIdAndDelete(req.params.id);
+    res.json({
+        message: 'Product deleted successfully'
+    });
 })
 
 
+
+//User Registration
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -45,7 +51,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
-
+//User Login
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -62,7 +68,8 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.post('/logout', (req, res) => {
-    res.json({ message: 'Logged out successfully' });
+
+
+
+app.listen(5000, ()=>{console.log('http://localhost:5000');
 });
-app.listen(5001)
