@@ -52,3 +52,5 @@ The API will be available at `http://localhost:5000`.
 - nodemon (This package is very helpful when you make changes and want to see the results without restarting the server, it automatically restart the project)
 
 For more details, please refer to the source code and comments within each file.
+
+## For other projects present in this folder, same stuff exist in those, it was done only to practice repeatedly.
