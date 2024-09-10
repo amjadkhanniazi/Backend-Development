@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import user from './models/users.js';
 import 'dotenv/config';
 import authenticateToken from './middlewares/auth.js';
+import authorize from './middlewares/authorization.js';
 
 const app = express();
 
@@ -21,8 +22,7 @@ app.get('/products', authenticateToken,async (req,res)=>{
 })
 
 
-
-app.post('/products/new', authenticateToken,async (req,res)=>{
+app.post('/products/new', authenticateToken, authorize(['editor', 'admin']),async (req,res)=>{
     const { name, price, description }  = new products(req.body);
     const userId = req.user.id; 
     const newProduct = new products({
@@ -39,19 +39,17 @@ app.post('/products/new', authenticateToken,async (req,res)=>{
     });
 })
 
-app.get('/products/:id', authenticateToken, async (req, res) => {
+app.get('/products/:id', authenticateToken, authorize(['editor', 'admin','user']), async (req, res) => {
     const product= await products.findById(req.params.id);
     res.json(product);
 })
 
-app.delete('/products/:id', authenticateToken, async (req, res) => {
+app.delete('/products/:id', authenticateToken, authorize(['admin']), async (req, res) => {
     await products.findByIdAndDelete(req.params.id);
     res.json({
         message: 'Product deleted successfully'
     });
 })
-
-
 
 
 // Route to get all products by a specific user
@@ -69,15 +67,15 @@ app.get('/users/:id/products', authenticateToken, async (req, res) => {
 
 //User Registration
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, role } = req.body;
     try {
-        const newUser = new user({ username, password });
-        await newUser.save();
-        res.status(201).json({ message: 'User created' });
+      const newUser = new user({ username, password, role });
+      await newUser.save();
+      res.status(201).json({ message: 'User created' });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+      res.status(400).json({ error: error.message });
     }
-});
+  });
 
 
 //User Login
@@ -85,6 +83,8 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
         const newUser = await user.findOne({ username });
+        console.log(newUser);
+        
         if (!newUser) return res.status(400).json({ error: 'Invalid credentials' });
 
         const isMatch = await newUser.comparePassword(password);

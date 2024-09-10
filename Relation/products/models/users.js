@@ -11,7 +11,13 @@ const userSchema = new mongoose.Schema({
     },
     password:{
         type: String,
-        required: true
+        required: true,
+        select: false
+    },
+    role: { 
+        type: String,
+        enum: ['user', 'editor', 'admin'],
+        default: 'user'
     }
 })
 
@@ -32,8 +38,9 @@ userSchema.virtual('products', {
     foreignField: 'user'
 });
 
-
-
+userSchema.methods.getRole = function() {
+    return this.role;
+  };
 
 // Compare hashed password
 userSchema.methods.comparePassword = function(candidatePassword) {

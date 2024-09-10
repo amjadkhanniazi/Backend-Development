@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
+import users from '../models/users.js';
 
 dotenv.config();
 
@@ -9,12 +10,13 @@ const authenticateToken = (req, res, next) => {
 
     if (token == null) return res.sendStatus(401);
 
-    jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+    jwt.verify(token, process.env.SECRET_KEY, async (err, user) => {
         if (err) return res.sendStatus(403);
-        req.user = user;
+        const temp= await users.findById(user.id)
+        req.user = temp;
         next();
     });
 };
 
 export default authenticateToken;
-// I am here
+
