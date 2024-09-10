@@ -1,20 +1,18 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-const { Schema } = mongoose;
 
 const userSchema = new mongoose.Schema({
-    username:{
+    username: {
         type: String,
         required: true,
         unique: true
     },
-    password:{
+    password: {
         type: String,
         required: true
     }
-})
-
+});
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
@@ -26,13 +24,11 @@ userSchema.pre('save', async function(next) {
 
 
 // Virtual field to get the products for a user (for ease of querying)
-userSchema.virtual('products', {
-    ref: 'products',
+userSchema.virtual('rooms', {
+    ref: 'rooms',
     localField: '_id',
     foreignField: 'user'
 });
-
-
 
 
 // Compare hashed password
@@ -45,6 +41,5 @@ userSchema.methods.getToken = function() {
 };
 
 
-export default mongoose.model('User',userSchema);
 
-// hello buddy, hw are you doing
+export default mongoose.model("User", userSchema);

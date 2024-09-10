@@ -11,19 +11,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+
 connectDB();
+
+
 app.get('/products', authenticateToken,async (req,res)=>{
     const product = await products.find();
     res.json(product);
 })
 
-app.get('/', (req, res) => {
-res.json("It is working")
-})
+
+
 app.post('/products/new', authenticateToken,async (req,res)=>{
     const { name, price, description }  = new products(req.body);
     const userId = req.user.id; 
-    const newProduct = new product({
+    const newProduct = new products({
         name,
         price,
         description,
@@ -51,6 +53,20 @@ app.delete('/products/:id', authenticateToken, async (req, res) => {
 
 
 
+
+// Route to get all products by a specific user
+app.get('/users/:id/products', authenticateToken, async (req, res) => {
+    try {
+      const id = req.params.id;
+      const userProduct = await products.find({ user: id });
+
+      res.status(200).json(userProduct);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+
 //User Registration
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
@@ -62,6 +78,7 @@ app.post('/register', async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 });
+
 
 //User Login
 app.post('/login', async (req, res) => {
