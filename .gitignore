@@ -23,4 +23,6 @@ yarn-error.log*
 
 #python
 config.py
-/.xlsx
+
+# Ignore Excel files
+*.xlsx
