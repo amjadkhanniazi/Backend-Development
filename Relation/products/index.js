@@ -83,7 +83,6 @@ app.post('/login', async (req, res) => {
     const { username, password } = req.body;
     try {
         const newUser = await user.findOne({ username });
-        console.log(newUser);
         
         if (!newUser) return res.status(400).json({ error: 'Invalid credentials' });
 

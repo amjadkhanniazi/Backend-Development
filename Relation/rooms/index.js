@@ -14,7 +14,7 @@ app.use(cors());
 
 connectDB();
 
-app.get('/rooms',async (req,res)=>{
+app.get('/rooms', authenticateToken,async (req,res)=>{
     const allRooms= await rooms.find();
     res.json(allRooms);
 })

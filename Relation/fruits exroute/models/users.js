@@ -32,8 +32,8 @@ userSchema.pre('save', async function(next) {
 
 
 // Virtual field to get the products for a user (for ease of querying)
-userSchema.virtual('products', {
-    ref: 'products',
+userSchema.virtual('fruits', {
+    ref: 'fruits',
     localField: '_id',
     foreignField: 'user'
 });
