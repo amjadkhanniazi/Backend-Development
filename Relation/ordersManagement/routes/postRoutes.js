@@ -9,116 +9,99 @@ const router = express.Router();
 
 //get all posts, public api
 router.get('/', async (req,res)=>{
-    const posts = await posts.find();
+
+  try{
+    const posts = await post.find();
     res.json(posts);
+  } 
+  catch (error){
+    res.status(500).json({error: error.message});
+  }
+
 });
 
 //create/add a post, only user can do
-// router.post('/new', authenticateToken,authorize['user'], async (req,res)=>{
-//     const {title, content} = req.body;
-//     const userID= req.user.id;
-//     const newPost = new post({title, content, user: userID});
-//     await newPost.save();
-//     res.json({
-//         message:"Post Created Successfully"
-//     });
-// });
+router.post('/new', authenticateToken,authorize(['user','editor','admin']), async (req,res)=>{
 
+  try{
+    const {title, content} = req.body;
+    const userID= req.user.id;
+    
+    const newPost = new post({title, content, user_id: userID});
 
-router.post('/new', authenticateToken, authorize(['editor', 'admin']), async (req, res) => {
-    const { title, content } = req.body;
-    const userId = req.user.id;
-    const newPost = new fruits({
-      title,
-      content,
-      user: userId
-    });
     await newPost.save();
     res.json({
-      message: 'fruit added successfully'
+        message:"Post Created Successfully"
     });
-  });
+  }
+  catch(error){
+    res.status(500).json({error: error.message});
+  }
 
-
-
-
-
-
+});
 
 
 //get a post by id
 router.get('/:id', async (req, res)=>{
+  
+  try{
     const getPost=  await post.findById(req.params.id);
     res.json(getPost);
-})
+  }
+  catch(error){
+    res.status(500).json({error: error.message});
+  }
+
+});
 
 
 //edit a post, only editor can do
-// router.put('/:id', authenticateToken, authorize['editor'], async (req, res)=>{
-//     const {title, content} = req.body;
-//     await user.findByIdAndUpdate(req.params.id, {title, content});
-//     res.json({
-//         message:'Post Updated Successfully'
-//     });
-// });
+router.put('/:id', authenticateToken, authorize(['editor']), async (req, res)=>{
 
-
-router.put('/:id', authenticateToken, authorize(['editor', 'admin']), async (req, res) => {
-    const { title,  content } = req.body;
-
-    await post.findByIdAndUpdate(req.params.id, { title, content });
+  try{
+    const {title, content} = req.body;
+    await post.findByIdAndUpdate(req.params.id, {title, content});
     res.json({
-      message: 'fruit updated successfully'
+        message:'Post Updated Successfully'
     });
-  });
+  }
+  catch(error){
+    res.status(500).json({error: error.message});
+  }
 
-
-
-
-
-
-
-
-
-
-
+});
 
 
 // delete a post, only admin can do
 router.delete('/:id',  authenticateToken, authorize(['admin']), async (req, res)=>{
+
+  try{
     await  post.findByIdAndDelete(req.params.id);
     res.json({
         message: 'Post Deleted'
     });
+  }
+  catch(error){
+    res.status(500).json({error: error.message});
+  }
+
 });
 
 
-// router.delete('/:id', authenticateToken, authorize(['admin']), async (req, res) => {
-//     await post.findByIdAndDelete(req.params.id);
-//     res.json({
-//       message: 'fruit deleted successfully'
-//     });
-//   });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //get posts by a specific user
-router.get('/user/:id', authenticateToken, async  (req, res)=>{
+router.get('/user/:id', async  (req, res)=>{
+
+  try{
     const id=req.params.id;
-    const userPosts = await post.find({user: id});
-    res.status(200).json(userPosts);
+    const userPosts = await post.find({user_id: id}) //.select('_id title content');
+    //res.json(userPosts);
+    
+    res.json(userPosts.map((post)=>({title: post.title, content: post.content})));
+  }
+  catch(error){
+    res.status(500).json({error: error.message});
+  }
+
 })
 
 
