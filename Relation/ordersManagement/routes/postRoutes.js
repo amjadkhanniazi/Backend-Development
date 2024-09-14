@@ -1,6 +1,5 @@
 import express from  'express';
 import post from '../models/post.js';
-import user from '../models/user.js'
 import authenticateToken from '../middlewares/authentication.js';
 import authorize from '../middlewares/authorization.js';
 
