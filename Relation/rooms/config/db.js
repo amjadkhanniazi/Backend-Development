@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import config from "./config.js";
 
 async function connectDB(){
-    const client = mongoose.connect(config.MONGO_URL, config.options);
+    const client = mongoose.connect(config.MONGO_URL);
 
     try{
         await client;

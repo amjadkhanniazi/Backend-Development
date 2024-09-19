@@ -19,6 +19,7 @@ app.get('/rooms', authenticateToken,async (req,res)=>{
     res.json(allRooms);
 })
 
+
 app.post('/rooms/new', authenticateToken, async (req,res)=> {
     const {name, description, price} = req.body;
     const newRoom = new rooms({name, description, price, user: req.user.id});
@@ -29,18 +30,18 @@ app.post('/rooms/new', authenticateToken, async (req,res)=> {
     if (roomCount >= 2) {
         return res.status(400).json({ message: "You can only add up to 2 rooms. Please delete an existing room or use a different user ID." });
     }
-
-
     await newRoom.save();
     res.json({
         message:"Room created successfully"
     });
 })
 
+
 app.get('/rooms/:id', async (req,res)=>{
     const room = await rooms.findById(req.params.id);
     res.json(room);
 })
+
 
 app.delete('/rooms/:id', async (req,res)=>{
     await rooms.findByIdAndDelete(req.params.id);
