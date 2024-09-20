@@ -38,7 +38,6 @@ function checkFileType(file, cb) {
   const filetypes = /jpeg|jpg|png|pdf/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
-
   if (mimetype && extname) {
     return cb(null, true);
   } else {
@@ -64,71 +63,71 @@ app.post('/upload', (req, res) => {
 
 // API to get a list of all uploaded files
 app.get('/files', (req, res) => {
-    // Read the files from the uploads directory
-    fs.readdir(uploadDir, (err, files) => {
-      if (err) {
-        return res.status(500).send('Unable to retrieve files');
-      }
-      // If no files exist, send an appropriate message
-      if (files.length === 0) {
-        return res.send('No files uploaded yet');
-      }
-      
-      // Send the list of files as a response
-      res.send(files);
-    });
+  // Read the files from the uploads directory
+  fs.readdir(uploadDir, (err, files) => {
+    if (err) {
+      return res.status(500).send('Unable to retrieve files');
+    }
+    // If no files exist, send an appropriate message
+    if (files.length === 0) {
+      return res.send('No files uploaded yet');
+    }
+
+    // Send the list of files as a response
+    res.send(files);
   });
+});
 
 
 // API to serve a specific file by name
-  app.get('/files/:filename', (req, res) => {
-    const fileName = req.params.filename;
-    const filePath = path.join(uploadDir, fileName);
-  
-    // Check if the file exists
-    fs.access(filePath, fs.constants.F_OK, (err) => {
-      if (err) {
-        return res.status(404).send('File not found');
-      }
-      // Send the file as a response
-      res.sendFile(filePath);
-    });
+app.get('/files/:filename', (req, res) => {
+  const fileName = req.params.filename;
+  const filePath = path.join(uploadDir, fileName);
+
+  // Check if the file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      return res.status(404).send('File not found');
+    }
+    // Send the file as a response
+    res.sendFile(filePath);
   });
+});
 
 
 // get urls of all files
-  app.get('/gallery', (req, res) => {
-    fs.readdir(uploadDir, (err, files) => {
+app.get('/gallery', (req, res) => {
+  fs.readdir(uploadDir, (err, files) => {
+    if (err) {
+      return res.status(500).send('Unable to retrieve files');
+    }
+    const imageUrls = files.filter(file => /\.(jpg|jpeg|png|pdf|gif)$/.test(file))
+      .map(file => `http://localhost:5000/files/${file}`);
+
+    res.json(imageUrls);
+  });
+});
+
+
+//delete an image
+app.delete('/filedel/:filename', (req, res) => {
+  const fileName = req.params.filename;
+  const filePath = path.join(uploadDir, fileName);
+
+  // Check if the file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      return res.status(404).send('File not found');
+    }
+    // Delete the file
+    fs.unlink(filePath, (err) => {
       if (err) {
-        return res.status(500).send('Unable to retrieve files');
+        return res.status(500).send('Unable to delete file');
       }
-      const imageUrls = files.filter(file => /\.(jpg|jpeg|png|pdf|gif)$/.test(file))
-                             .map(file => `http://localhost:5000/files/${file}`);
-                             
-      res.json(imageUrls);
+      res.send('File deleted successfully');
     });
   });
-  
-
-  //delete an image
-    app.delete('/filedel/:filename', (req, res) => {
-        const fileName = req.params.filename;
-        const filePath = path.join(uploadDir, fileName);
-    
-        // Check if the file exists
-        fs.access(filePath, fs.constants.F_OK, (err) => {
-        if (err) {
-            return res.status(404).send('File not found');
-        }
-        // Delete the file
-        fs.unlink(filePath, (err) => {
-            if (err) {
-            return res.status(500).send('Unable to delete file');
-            }
-            res.send('File deleted successfully');
-        });
-        });
-    });
+});
 
 
 

@@ -25,7 +25,6 @@ router.post('/login', async (req, res) => {
       const newUser = await user.findOne({ 
         $or: [{ username: username }, { email: username }] 
       });
-      
       if (!newUser) return res.status(400).json({ error: 'Invalid credentials' });
   
       // Compare the provided password with the stored hashed password
@@ -34,7 +33,7 @@ router.post('/login', async (req, res) => {
   
       // Generate token upon successful login
       const token = newUser.getToken();
-      res.json({ token, userId:  newUser._id });
+      res.json({ token, userId: newUser._id });
 
     } catch (error) {
       res.status(500).json({ error: error.message });
