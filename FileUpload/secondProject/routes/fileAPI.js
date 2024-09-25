@@ -5,6 +5,7 @@ import File from '../models/files.js';  // Assuming this is the File schema
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import fs from 'fs';
 import authenticateToken from '../middlewares/authentication.js';
 
 const router = express.Router();
@@ -85,7 +86,8 @@ router.post('/upload', authenticateToken, (req, res) => {
 });
 
 // Route to get all files for a specific user
-router.get('/getAll/:user_id', async (req, res) => {
+router.get('/getAll/:user_id', authenticateToken, async (req, res) => {
+
     try {
       // Get user_id from the route parameter
       const userId = req.params.user_id;
@@ -99,7 +101,8 @@ router.get('/getAll/:user_id', async (req, res) => {
       }
   
       // Return the files
-      res.status(200).json(userFiles.map(file => file.url));
+      res.status(200).json(userFiles.map(file => ({ id: file._id, url: file.url })));
+
     } catch (err) {
       // Handle any errors during the query
       res.status(500).send(`Error retrieving files: ${err.message}`);
@@ -109,5 +112,35 @@ router.get('/getAll/:user_id', async (req, res) => {
 
 
 
+  // Route to delete a file by its ID
+router.delete('/filedel/:file_id', authenticateToken, async (req, res) => {
+  try {
+    // Find the file by its ID in the database
+    const file = await File.findById(req.params.file_id);
+
+    if (!file) {
+      return res.status(404).send('File not found');
+    }
+
+    // File path where the file is stored on the server
+    const filePath = path.join(__dirname, '../uploads', path.basename(file.url));
+
+    // Remove the file from the file system
+    fs.unlink(filePath, async (err) => {
+      if (err) {
+        return res.status(500).send(`Error deleting file: ${err.message}`);
+      }
+
+      // Remove the file record from the MongoDB database
+      await File.findByIdAndDelete(req.params.file_id);
+
+      // Send a success response
+      res.status(200).send('File successfully deleted');
+    });
+
+  } catch (err) {
+    res.status(500).send(`Error deleting file: ${err.message}`);
+  }
+});
 
 export default router;
