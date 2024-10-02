@@ -5,6 +5,7 @@ import 'dotenv/config';
 import fruitsRoutes from './routes/fruitAPI.js';
 import authRoutes from './routes/authAPI.js';
 
+
 const app = express();
 
 app.use(cors());
@@ -14,6 +15,7 @@ app.use(express.urlencoded({extended:true}));
 connectDB();
 
 // Use routers
+app.get("/", (req, res) => res.send("Express on Vercel"));
 app.use('/fruits', fruitsRoutes);
 app.use('/auth', authRoutes);
 

@@ -1,0 +1,6 @@
+// message.proto
+syntax = "proto3";
+
+message ResponseMessage {
+  string message = 1;
+}
