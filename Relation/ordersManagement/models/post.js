@@ -21,4 +21,6 @@ const postSchema = new mongoose.Schema({
   }
 });
 
+postSchema.index({createdAt: -1});
+
 export default mongoose.model('Post', postSchema);

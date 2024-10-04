@@ -25,7 +25,7 @@ app.use(cors(corsOptions));
 connectDB();
 
 app.use('/user', userRoutes);
-app.use('/post', apiLimiter,postRoutes);
+app.use('/post', postRoutes);
 
 app.listen(5000,  () => {
     console.log('server is running on http://localhost:5000');

@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+userSchema.index({username: 1});
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {

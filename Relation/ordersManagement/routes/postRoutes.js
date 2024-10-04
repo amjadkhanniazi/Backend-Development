@@ -3,6 +3,7 @@ import post from '../models/post.js';
 import authenticateToken from '../middlewares/authentication.js';
 import authorize from '../middlewares/authorization.js';
 import apiLimiter from '../middlewares/apiLimiter.js';
+import moment from 'moment';
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.post('/new', authenticateToken,authorize(['user','editor','admin']), asyn
     const {title, content} = req.body;
     const userID= req.user.id;
     
-    const newPost = new post({title, content, user_id: userID});
+    const newPost = new post({title, content, user_id: userID, createdAt: moment().format('l')});
 
     await newPost.save();
     res.json({
@@ -45,6 +46,7 @@ router.post('/new', authenticateToken,authorize(['user','editor','admin']), asyn
 router.get('/:id', async (req, res)=>{
   
   try{
+    
     const getPost=  await post.findById(req.params.id);
     res.json(getPost);
   }
@@ -84,7 +86,6 @@ router.delete('/:id',  authenticateToken, authorize(['admin']), async (req, res)
   catch(error){
     res.status(500).json({error: error.message});
   }
-
 });
 
 

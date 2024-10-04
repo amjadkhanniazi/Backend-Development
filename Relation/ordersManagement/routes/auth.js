@@ -1,10 +1,16 @@
 import express from 'express';
 import user from '../models/user.js';
+import validateUser from '../middlewares/validateUser.js';
 
 const router = express.Router();
 
 // User Registration
 router.post('/register', async (req, res) => {
+
+  const { error } = validateUser(req.body);  // Validate user input
+  if (error) return res.status(400).send({Message: error.details[0].message});
+
+
   const { username, password, role } = req.body;
   try {
     const newUser = new user({ username, password, role });
@@ -20,6 +26,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
   try {
+
     const newUser = await user.findOne({ username });
     if (!newUser) return res.status(400).json({ error: 'Invalid credentials' });
 
