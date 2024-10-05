@@ -4,6 +4,7 @@ import authenticateToken from '../middlewares/authentication.js';
 import authorize from '../middlewares/authorization.js';
 import apiLimiter from '../middlewares/apiLimiter.js';
 import moment from 'moment';
+import validatePost from '../middlewares/validatePost.js';
 
 const router = express.Router();
 
@@ -23,6 +24,8 @@ router.get('/', async (req,res)=>{
 
 //create/add a post, only user can do
 router.post('/new', authenticateToken,authorize(['user','editor','admin']), async (req,res)=>{
+  const {error} = validatePost(req.body);
+  if(error) return res.status(400).json({error: error.details[0].message});
 
   try{
     const {title, content} = req.body;
