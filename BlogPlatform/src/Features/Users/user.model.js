@@ -1,4 +1,9 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const detenv = require('dotenv');
+
+detenv.config();
 
 const userSchema = new mongoose.Schema({
     name: {type: String, required: true},
@@ -36,4 +41,5 @@ userSchema.methods.getToken = function() {
 };
 
 
-export default mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+module.exports = User;

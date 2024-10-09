@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
-import users from '../models/user.js';
-import dotenv from 'dotenv';
+const jwt = require('jsonwebtoken');
+const users = require('../Features/Users/user.model');
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -18,4 +18,4 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-export default authenticateToken;
+module.exports = authenticateToken;
