@@ -1,4 +1,4 @@
-const Blog = require('./blog.model');
+const {Blog} = require('./blog.model');
 const User = require('../Users/user.model');
 
 //create a blog
