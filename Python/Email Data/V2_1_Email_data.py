@@ -1,8 +1,12 @@
+# Updated Code:
+# Fix for the newline issue: used a better parsing technique to ignore the "Contact" keyword in the name extraction.
+# Processing latest 10 emails: limit the emails processed to the 10 most recent.
+
+
 import imaplib
 import email
 import re
 import pandas as pd
-from datetime import datetime
 import config
 
 # Function to connect to the email server
@@ -11,25 +15,17 @@ def connect_to_email(username, password):
     mail.login(username, password)
     return mail
 
-# Function to fetch emails with specific subject and date range
-def fetch_emails(mail, start_date, end_date, limit=10, folder='inbox'):
+# Function to fetch and parse the latest 10 emails
+def fetch_emails(mail, folder='inbox', limit=10):
     mail.select(folder)
-    
-    # Format dates as required by IMAP search
-    start_date = start_date.strftime("%d-%b-%Y")  # IMAP format e.g., 10-Sep-2024
-    end_date = end_date.strftime("%d-%b-%Y")
-    
-    # Search for emails with the specified subject and within the date range
-    search_criteria = f'(SINCE {start_date} BEFORE {end_date})'
-    result, data = mail.search(None, search_criteria)
+    result, data = mail.search(None, 'ALL')
     email_ids = data[0].split()
-    
-    # Limit the number of emails to fetch
-    email_ids = email_ids[-limit:]
-    
+
+    # Fetch the latest 'limit' emails
+    latest_email_ids = email_ids[-limit:]
     emails = []
 
-    for e_id in email_ids:
+    for e_id in latest_email_ids:
         result, msg_data = mail.fetch(e_id, '(RFC822)')
         raw_email = msg_data[0][1]
         msg = email.message_from_bytes(raw_email)
@@ -59,30 +55,49 @@ def fetch_emails(mail, start_date, end_date, limit=10, folder='inbox'):
     return emails
 
 # Function to extract name and phone number
+import re
+
 def extract_name_and_phone(email_body):
-    name_pattern = r"Name:\s*([A-Za-z\s]+)(?=\n|$)"
-    phone_pattern = r"Contact:\s*(\d{11})"
+    # Adjusted regex patterns for both formats
     
-    name_match = re.search(name_pattern, email_body)
-    phone_match = re.search(phone_pattern, email_body)
+    # Match the name for the standard format "Name/Surname"
+    name_pattern = r"Name/Surname\s*([A-Za-z\s]+)(?=\n|$)"
     
-    name = name_match.group(1).strip() if name_match else "N/A"
-    phone = phone_match.group(1).strip() if phone_match else "N/A"
+    # Match the phone number pattern
+    phone_pattern = r"Phone\s*(\d{11})"
+    
+    # Additional pattern to capture the "Shipping Details" format
+    shipping_pattern = r"Shipping Details:\s*\n+([A-Za-z\s]+)\n+.*?\n+.*?\n+Phone:\s*(\d{10,11})"
+    
+    # First, try matching the "Shipping Details" format
+    shipping_match = re.search(shipping_pattern, email_body)
+    
+    if shipping_match:
+        name = shipping_match.group(1).strip()
+        phone = shipping_match.group(2).strip()
+    else:
+        # If "Shipping Details" format is not found, use the standard format
+        name_match = re.search(name_pattern, email_body)
+        phone_match = re.search(phone_pattern, email_body)
+        
+        name = name_match.group(1).strip() if name_match else "N/A"
+        phone = phone_match.group(1).strip() if phone_match else "N/A"
     
     return name, phone
 
+
 # Function to save data to Excel
-def save_to_excel(data, filename='V3_output1.xlsx'):
+def save_to_excel(data, filename='V2_output.xlsx'):
     df = pd.DataFrame(data, columns=['Name', 'Phone Number'])
     df.to_excel(filename, index=False)
     print(f"Data saved to {filename}")
 
 # Main function
-def main(username, password, subject_keyword, start_date, end_date, limit):
+def main(username, password):
     mail = connect_to_email(username, password)
     
-    print(f"Fetching up to {limit} latest emails with subject '{subject_keyword}' between {start_date} and {end_date}...")
-    emails = fetch_emails(mail, subject_keyword, start_date, end_date, limit)
+    print("Fetching latest 10 emails...")
+    emails = fetch_emails(mail, limit=20)
 
     data = []
     
@@ -92,11 +107,10 @@ def main(username, password, subject_keyword, start_date, end_date, limit):
     
     save_to_excel(data)
 
-  # Filter emails with this subject
-start_date = datetime(2024, 9, 9)  # Start date in YYYY, MM, DD format
-end_date = datetime(2024, 10, 11)   # End date in YYYY, MM, DD format
-limit = 10  # Limit the number of emails
+# Replace with your email credentials
+username = config.EMAIL_USERNAME
+password = config.EMAIL_PASSWORD
 
 # Run the script
 if __name__ == "__main__":
-    main(config.EMAIL_USERNAME, config.EMAIL_PASSWORD, start_date, end_date, limit)
+    main(username, password)

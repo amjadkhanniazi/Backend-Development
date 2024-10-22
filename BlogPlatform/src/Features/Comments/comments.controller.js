@@ -1,5 +1,5 @@
 const { Blog } = require('../Blogs/blog.model.js');  // Ensure correct path
-const { Comment } = require('../Comments/comments.model');
+
 
 // Add comment
 const addComment = async (req, res) => {
@@ -28,14 +28,14 @@ const deleteComment = async (req, res) => {
             return res.status(404).json({ message: "Blog not found" });
         }
 
-        // see comment is done by user who is deleting it
+      
         const comment = blog.comments.find(comment => comment._id.toString() === req.query.commentId);
 
         // if comment is not found
         if (!comment) {
             return res.status(404).json({ message: "Comment not found" });
         }
-
+          // see comment is done by user who is deleting it
         if (comment.user.toString() !== req.user.id) {
             return res.status(401).json({ message: "Unauthorized" });
         }
