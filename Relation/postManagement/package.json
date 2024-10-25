@@ -1,11 +1,16 @@
 {
   "name": "postmanagement",
   "version": "1.0.0",
-  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "server": "nodemon index.js"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./jest.setup.js"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -15,7 +20,6 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
     "express": "^4.20.0",
     "express-rate-limit": "^7.4.0",
     "joi": "^17.13.3",
@@ -23,10 +27,13 @@
     "moment": "^2.30.1",
     "mongodb": "^6.9.0",
     "mongoose": "^8.6.1",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "dotenv": "^16.4.5",
     "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.2",
     "supertest": "^7.0.0"
   }
 }

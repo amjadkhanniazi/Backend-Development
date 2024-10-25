@@ -1,10 +1,12 @@
-import express from 'express';
-import connectDB from './config/db.js';
-import cors  from 'cors';
-import 'dotenv/config';
-import userRoutes from './routes/auth.js';
-import postRoutes from './routes/postRoutes.js';
-import apiLimiter from './middlewares/apiLimiter.js';
+const express = require('express');
+const connectDB = require('./config/db.js');
+const cors = require('cors');
+require('dotenv').config();
+const userRoutes = require('./routes/auth.js');
+const postRoutes = require('./routes/postRoutes.js');
+const apiLimiter = require('./middlewares/apiLimiter.js');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 const app=express();
 
@@ -17,7 +19,8 @@ const corsOptions = {
     maxAge: 600 // 10 minutes, 600 Seconds
 };
 
-
+// Serve Swagger UI on a route, e.g., /api-docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors(corsOptions));

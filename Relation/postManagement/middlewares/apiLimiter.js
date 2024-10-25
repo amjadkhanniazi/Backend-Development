@@ -1,4 +1,4 @@
-import rateLimit from "express-rate-limit";
+const rateLimit = require("express-rate-limit");
 
 // Define the rate limit rule
 const apiLimiter = rateLimit({
@@ -8,4 +8,4 @@ const apiLimiter = rateLimit({
   headers: true, // Include rate limit info in headers
 });
 
-export default apiLimiter;
+module.exports = apiLimiter;

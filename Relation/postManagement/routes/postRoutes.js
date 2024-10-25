@@ -1,10 +1,10 @@
-import express from  'express';
-import post from '../models/post.js';
-import authenticateToken from '../middlewares/authentication.js';
-import authorize from '../middlewares/authorization.js';
-import apiLimiter from '../middlewares/apiLimiter.js';
-import moment from 'moment';
-import validatePost from '../middlewares/validatePost.js';
+const express = require('express');
+const post = require('../models/post.js');
+const authenticateToken = require('../middlewares/authentication.js');
+const authorize = require('../middlewares/authorization.js');
+const apiLimiter = require('../middlewares/apiLimiter.js');
+const moment = require('moment');
+const validatePost = require('../middlewares/validatePost.js');
 
 const router = express.Router();
 
@@ -61,7 +61,7 @@ router.get('/:id', async (req, res)=>{
 
 
 //edit a post, only editor can do
-router.put('/:id', authenticateToken, authorize(['editor']), async (req, res)=>{
+router.put('/:id', authenticateToken, async (req, res)=>{
 
   try{
     const {title, content} = req.body;
@@ -78,7 +78,7 @@ router.put('/:id', authenticateToken, authorize(['editor']), async (req, res)=>{
 
 
 // delete a post, only admin can do
-router.delete('/:id',  authenticateToken, authorize(['admin']), async (req, res)=>{
+router.delete('/:id',  authenticateToken, async (req, res)=>{
 
   try{
     await  post.findByIdAndDelete(req.params.id);
@@ -108,6 +108,5 @@ router.get('/user/:id', async  (req, res)=>{
 
 })
 
-
-export default router;
+module.exports = router;
 

@@ -1,0 +1,256 @@
+{
+  "swagger": "2.0",
+  "info": {
+      "version": "1.0.0",
+      "title": "Post Management API",
+      "description": "API documentation for Post Management with JWT Bearer Authentication"
+  },
+  "components": {
+  "securitySchemes": {
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer",
+      "bearerFormat": "JWT"
+    }
+  }
+},
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": ["http"],
+  "paths": {
+      "/user/register": {
+          "post": {
+              "summary": "User Registration",
+              "parameters": [{
+                  "in": "body",
+                  "name": "body",
+                  "description": "User registration details",
+                  "required": true,
+                  "schema": {
+                      "type": "object",
+                      "properties": {
+                          "username": {
+                              "type": "string"
+                          },
+                          "password": {
+                              "type": "string"
+                          }
+                      }
+                  }
+              }],
+              "responses": {
+                  "201": {
+                      "description": "User registered successfully"
+                  },
+                  "400": {
+                      "description": "Username already exists"
+                  }
+              }
+          }
+      },
+      "/user/login": {
+          "post": {
+              "summary": "User Login",
+              "parameters": [{
+                  "in": "body",
+                  "name": "body",
+                  "description": "User login details",
+                  "required": true,
+                  "schema": {
+                      "type": "object",
+                      "properties": {
+                          "username": {
+                              "type": "string"
+                          },
+                          "password": {
+                              "type": "string"
+                          }
+                      }
+                  }
+              }],
+              "responses": {
+                  "200": {
+                      "description": "Login successful",
+                      "schema": {
+                          "type": "object",
+                          "properties": {
+                              "token": {
+                                  "type": "string",
+                                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "Invalid credentials"
+                  }
+              }
+          }
+      },
+      "/post/": {
+          "get": {
+              "summary": "Get All Posts",
+              "responses": {
+                  "200": {
+                      "description": "List of all posts",
+                      "schema": {
+                          "type": "array",
+                          "items": {
+                              "type": "object",
+                              "properties": {
+                                  "title": {
+                                      "type": "string"
+                                  },
+                                  "content": {
+                                      "type": "string"
+                                  },
+                                  "author": {
+                                      "type": "string"
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      },
+      "/post/new": {
+          "post": {
+              "summary": "Create a new post",
+              "security": [{
+                  "bearerAuth": []
+              }],
+              "parameters": [
+                  {
+                      "in": "body",
+                      "name": "body",
+                      "description": "Post details",
+                      "required": true,
+                      "schema": {
+                          "type": "object",
+                          "required": ["title", "content"],
+                          "properties": {
+                              "title": {
+                                  "type": "string"
+                              },
+                              "content": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              ],
+              "responses": {
+                  "201": {
+                      "description": "Post created successfully"
+                  },
+                  "401": {
+                      "description": "Unauthorized - No token provided"
+                  },
+                  "403": {
+                      "description": "Forbidden - Invalid token"
+                  }
+              }
+          }
+      },
+      "/post/{postId}": {
+          "put": {
+              "summary": "Update a post",
+              "security": [{
+                  "bearerAuth": []
+              }],
+              "parameters": [
+                  {
+                      "in": "header",
+                      "name": "Authorization",
+                      "type": "string",
+                      "required": true,
+                      "description": "JWT token with Bearer prefix. Format: 'Bearer {token}'",
+                      "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  },
+                  {
+                      "name": "postId",
+                      "in": "path",
+                      "required": true,
+                      "type": "string"
+                  },
+                  {
+                      "in": "body",
+                      "name": "body",
+                      "description": "Post details to update",
+                      "required": true,
+                      "schema": {
+                          "type": "object",
+                          "properties": {
+                              "title": {
+                                  "type": "string"
+                              },
+                              "content": {
+                                  "type": "string"
+                              }
+                          }
+                      }
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Post updated successfully"
+                  },
+                  "401": {
+                      "description": "Unauthorized - No token provided"
+                  },
+                  "403": {
+                      "description": "Forbidden - Invalid token"
+                  },
+                  "404": {
+                      "description": "Post not found"
+                  }
+              }
+          },
+          "delete": {
+              "summary": "Delete a post",
+              "security": [{
+                  "bearerAuth": []
+              }],
+              "parameters": [
+                  {
+                      "in": "header",
+                      "name": "Authorization",
+                      "type": "string",
+                      "required": true,
+                      "description": "JWT token with Bearer prefix. Format: 'Bearer {token}'",
+                      "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  },
+                  {
+                      "name": "postId",
+                      "in": "path",
+                      "required": true,
+                      "type": "string"
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Post deleted successfully"
+                  },
+                  "401": {
+                      "description": "Unauthorized - No token provided"
+                  },
+                  "403": {
+                      "description": "Forbidden - Invalid token"
+                  },
+                  "404": {
+                      "description": "Post not found"
+                  }
+              }
+          }
+      }
+  },
+  "securityDefinitions": {
+      "bearerAuth": {
+          "type": "apiKey",
+          "name": "Authorization",
+          "in": "header",
+          "description": "JWT token with Bearer prefix. Format: 'Bearer {token}'"
+      }
+  }
+}

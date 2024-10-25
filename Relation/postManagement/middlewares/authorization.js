@@ -11,4 +11,4 @@ const authorize = (allowedRoles) => {
     };
 };
 
-export default authorize;
+module.exports = authorize;

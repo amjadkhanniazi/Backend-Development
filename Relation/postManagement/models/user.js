@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   role: { 
       type: String,
       enum: ['user', 'editor', 'admin'],
-      default: 'user'
+      default: 'admin'
   }
 });
 
@@ -51,5 +51,4 @@ userSchema.methods.getToken = function() {
     return jwt.sign({ id: this._id, username: this.username }, process.env.SECRET_KEY, { expiresIn: '1h' });
 };
 
-
-export default mongoose.model('User',userSchema);
+module.exports = mongoose.model('User', userSchema);
