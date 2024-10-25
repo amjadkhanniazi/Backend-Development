@@ -161,14 +161,6 @@
               }],
               "parameters": [
                   {
-                      "in": "header",
-                      "name": "Authorization",
-                      "type": "string",
-                      "required": true,
-                      "description": "JWT token with Bearer prefix. Format: 'Bearer {token}'",
-                      "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                  },
-                  {
                       "name": "postId",
                       "in": "path",
                       "required": true,
@@ -213,14 +205,6 @@
                   "bearerAuth": []
               }],
               "parameters": [
-                  {
-                      "in": "header",
-                      "name": "Authorization",
-                      "type": "string",
-                      "required": true,
-                      "description": "JWT token with Bearer prefix. Format: 'Bearer {token}'",
-                      "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                  },
                   {
                       "name": "postId",
                       "in": "path",

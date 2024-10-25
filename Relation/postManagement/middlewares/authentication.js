@@ -5,8 +5,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['Authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const authHeader = req.headers['authorization'];
+
+    const token = authHeader && authHeader.split(' ')[0];
+    
 
     if (token == null) return res.status(401).json({ message: 'Unauthorized' });
 
