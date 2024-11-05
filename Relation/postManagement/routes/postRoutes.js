@@ -9,7 +9,6 @@ const validatePost = require('../middlewares/validatePost.js');
 
 const router = express.Router();
 
-
 //get all posts, public api
 router.get('/', async (req,res)=>{
 
@@ -45,7 +44,6 @@ router.post('/new', authenticateToken,authorize(['user','editor','admin']), asyn
 
 });
 
-
 //get a post by id
 router.get('/:id', async (req, res)=>{
   
@@ -59,7 +57,6 @@ router.get('/:id', async (req, res)=>{
   }
 
 });
-
 
 //edit a post, only editor can do
 router.put('/:id', authenticateToken, async (req, res)=>{
@@ -77,7 +74,6 @@ router.put('/:id', authenticateToken, async (req, res)=>{
   }
 
 });
-
 
 // delete a post, only admin can do
 router.delete('/:id',  authenticateToken, async (req, res)=>{
