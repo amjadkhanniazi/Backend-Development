@@ -93,7 +93,6 @@ router.delete('/:id',  authenticateToken, async (req, res)=>{
   }
 });
 
-
 //get posts by a specific user
 router.get('/user/:id', async  (req, res)=>{
 
@@ -101,14 +100,11 @@ router.get('/user/:id', async  (req, res)=>{
     const id=req.params.id;
     const userPosts = await post.find({user_id: id}) //.select('_id title content');
     //res.json(userPosts);
-    
     res.json(userPosts.map((post)=>({title: post.title, content: post.content})));
   }
   catch(error){
     res.status(500).json({error: error.message});
   }
-
 })
 
 module.exports = router;
-
