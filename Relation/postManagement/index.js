@@ -27,6 +27,7 @@ app.use(cors(corsOptions));
 
 connectDB();
 
+// Routes
 app.use('/user', userRoutes);
 app.use('/post', postRoutes);
 
